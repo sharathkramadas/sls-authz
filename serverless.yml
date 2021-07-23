@@ -1,0 +1,32 @@
+service: sls-authz
+
+provider:
+  name: aws
+  runtime: python3.8
+
+package:
+ include:
+   - handler.py
+   - authorizer.py
+   - requirements.txt
+ exclude:
+   - venv
+   - node_modules
+   - package.json
+   - package-lock.json
+
+plugins:
+  - serverless-python-requirements
+functions:
+  authorize:
+    handler: authorizer.authorize_request
+  hello:
+    handler: handler.hello
+    events:
+    - http:
+        path: /
+        method: get
+        authorizer: authorize
+
+
+
